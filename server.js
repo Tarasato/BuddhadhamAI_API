@@ -19,8 +19,6 @@ const io = new Server(server, {
   }
 });
 
-let taskId;
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -53,13 +51,19 @@ io.on('connect', (socket) => {
         console.log('User disconnected');
     });
 
-    socket.on(taskId, (msg) => {
-            io.emit(taskId, msg);
-            // console.log('Message received:', msg);
+    socket.on("task", (payload) => {
+            console.log('Task received:', payload);
+            // console.log('taskId:', payload.taskId);
+            io.emit(`${payload.taskId}`, payload.message);
+            console.log('Emitted to:', `${payload.taskId}`);
     })
 
     socket.on("BuddhamAI", (msg) => {
             console.log('Socket :', msg);
+    })
+
+    socket.on("debug", (msg) => {
+            io.emit("debug", msg);
     })
 });
 
