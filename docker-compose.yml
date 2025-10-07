@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  buddham_ai:
+  buddham_ai_api:
     image: buddham_ai_api:latest
     build: .
     env_file:
