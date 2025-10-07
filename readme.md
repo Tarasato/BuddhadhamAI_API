@@ -31,6 +31,6 @@ pip install numpy
 pip install ollama
 
 #to do list
-- API เช็ก task ล่ม
-- เช็กคำตอบกลับจาก AI
-- บันทึก A ลง DB
+docker build -t buddham_ai_api .
+
+docker-compose up

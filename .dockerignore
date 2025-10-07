@@ -1,0 +1,37 @@
+# pycache
+__pycache__
+
+# Node / build
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Prisma / DB local
+prisma/migrations
+prisma/tableData
+prisma/book_tb_trg.sql
+prisma/chapter_tb_trg.sql
+prisma/sqlserver.sql
+prisma/Trigger.sql
+
+# Git / system
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+
+# IDE / temp
+.vscode
+.dist
+.idea
+*.swp
+*.swo
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# etc
+readme.md
