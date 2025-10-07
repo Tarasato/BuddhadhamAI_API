@@ -7,7 +7,7 @@ router.get("/:chatId", qNaCtrl.getqNaByChatId);
 router.post("/ask", qNaCtrl.ask);
 router.post("/cancel/:taskId", qNaCtrl.cancel);
 router.post("/answer", qNaCtrl.saveAnswer);
-router.post("/status/:taskId", qNaCtrl.checkStatus);
+router.get("/status/:taskId", qNaCtrl.checkStatus);
 router.delete("/:qNaId", qNaCtrl.deleteqNa);
 
 module.exports = router;
