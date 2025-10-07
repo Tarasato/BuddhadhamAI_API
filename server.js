@@ -57,6 +57,10 @@ io.on('connect', (socket) => {
             io.emit(taskId, msg);
             // console.log('Message received:', msg);
     })
+
+    socket.on("BuddhamAI", (msg) => {
+            console.log('Socket :', msg);
+    })
 });
 
 // Start server
