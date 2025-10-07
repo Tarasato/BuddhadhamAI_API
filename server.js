@@ -11,9 +11,10 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = process.env.ORIGIN;
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:8081", // หรือ "*" ใน dev
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });

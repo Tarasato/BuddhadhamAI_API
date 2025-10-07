@@ -11,15 +11,24 @@ const { PrismaClient } = require("@prisma/client"); //Models
 const prisma = new PrismaClient();
 
 // สร้างผู้ใช้งานใหม่ 
+// npm install bcrypt
+const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 12; // ปรับได้ตามต้องการ
+
 exports.createUser = async (req, res) => {
   try {
+    // 1. hash password ก่อน
+    const hashedPassword = await bcrypt.hash(req.body.userPassword, SALT_ROUNDS);
+
+    // 2. save ลง DB
     const result = await prisma.user_tb.create({
       data: {
         userName: req.body.userName,
         userEmail: req.body.userEmail,
-        userPassword: req.body.userPassword,
+        userPassword: hashedPassword, // ใช้ hashed แทน plaintext
       },
     });
+
     res.status(201).json({
       message: "User created successfully",
       data: result,
@@ -30,6 +39,7 @@ exports.createUser = async (req, res) => {
     });
   }
 };
+
 
 // ตรวจสอบการเข้าสู่ระบบ 
 exports.checkLoginUser = async (req, res) => {
@@ -43,32 +53,38 @@ exports.checkLoginUser = async (req, res) => {
       });
     }
 
-    // ค้นหาผู้ใช้
-    const result = await prisma.user_tb.findFirst({
-      where: {
-        userEmail,
-        userPassword
-      },
+    // หา user ด้วย email ก่อน
+    const user = await prisma.user_tb.findFirst({
+      where: { userEmail }
     });
 
-    if (result) {
-      res.status(200).json({
-        message: "User login successfully OvO",
-        data: {
-          userId: result.userId,
-          userName: result.userName,
-          userEmail: result.userEmail
-        }
-      });
-    } else {
-      res.status(404).json({
-        message: "User login failed TwT",
+    if (!user) {
+      return res.status(404).json({
+        message: "User login failed",
       });
     }
+
+    // ตรวจสอบ password กับ hash ใน DB
+    const isMatch = await bcrypt.compare(userPassword, user.userPassword);
+    if (!isMatch) {
+      return res.status(404).json({
+        message: "User login failed",
+      });
+    }
+
+    // login success
+    res.status(200).json({
+      message: "User login successfully",
+      data: {
+        userId: user.userId,
+        userName: user.userName,
+        userEmail: user.userEmail
+      }
+    });
+
   } catch (error) {
     res.status(500).json({
       message: error.message,
     });
   }
 };
-
