@@ -18,6 +18,8 @@ const io = new Server(server, {
   }
 });
 
+let taskId;
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -50,8 +52,8 @@ io.on('connect', (socket) => {
         console.log('User disconnected');
     });
 
-    socket.on('message', (msg) => {
-            io.emit('message', msg);
+    socket.on(taskId, (msg) => {
+            io.emit(taskId, msg);
             // console.log('Message received:', msg);
     })
 });
