@@ -87,7 +87,7 @@ exports.saveAnswer = async (req, res) => {
     const savedAnswer = await prisma.qNa_tb.create({
       data: {
         chatId: parseInt(chatId),
-        taskId: parseInt(taskId),
+        taskId: String(taskId),
         qNaWords: qNaWords,
         qNaType: "A",
       },

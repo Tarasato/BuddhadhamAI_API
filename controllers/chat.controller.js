@@ -101,7 +101,7 @@ exports.getChatsByUserId = async (req, res) => {
       chats.map(async (chat) => {
         const latestQ = await prisma.qNa_tb.findFirst({
           where: { chatId: chat.id },
-          orderBy: { qNaId: 'desc' }, // <- qNaId ล่าสุด
+          orderBy: { qNaId: 'asc' }, // <- qNaId ล่าสุด
           select: { createdAt: true, qNaId: true },
         });
         return { ...chat, latestQ };

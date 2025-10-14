@@ -23,6 +23,7 @@ sqlcmd -S <ServerIP> -U <Username> -P <Password>
 output   = "../generated/prisma" If you have ยพรหทฟ problems, remove this from schema.prisma
 npx prisma migrate reset --force
 npx prisma migrate dev --name init
+npx prisma migrate deploy
 
 git rm --cached config.json
 

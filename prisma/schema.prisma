@@ -11,7 +11,7 @@ model user_tb {
   userId       Int       @id @default(autoincrement())
   userName     String    @db.VarChar(100)
   userEmail    String    @db.VarChar(50)
-  userPassword String    @db.VarChar(50)
+  userPassword String    @db.NVarChar(MAX)
   createdAt     DateTime  @default(now())
 
   chats        chat_tb[]
