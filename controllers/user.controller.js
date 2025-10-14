@@ -1,20 +1,15 @@
-
-// ไฟล์ที่เขียนการดำเนินการควบคุมสำหรับตารางในฐานข้อมูล
-//เช่น insert, update, delete, select
-//ไฟล์นี้ทำงานกับ user_tb
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-//ใช้ Prisma เพื่อทำงานร่วมกับ DB
 const { PrismaClient } = require("@prisma/client"); //Models
 const prisma = new PrismaClient();
 
-// สร้างผู้ใช้งานใหม่ 
 // npm install bcrypt
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 12; // ปรับได้ตามต้องการ
 
+// สร้างบัญชีผู้ใช้งานใหม่ 
 exports.createUser = async (req, res) => {
   try {
     const { userName, userEmail, userPassword } = req.body;

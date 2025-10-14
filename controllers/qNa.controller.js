@@ -14,7 +14,11 @@ exports.ask = async (req, res) => {
 
     // 1. ส่ง request ไป main.py เพื่อสร้างงาน
     const resData = await axios.post(
-      "http://" + process.env.AI_SERVER + ":" + process.env.AI_SERVER_PORT + "/ask",
+      "http://" +
+        process.env.AI_SERVER +
+        ":" +
+        process.env.AI_SERVER_PORT +
+        "/ask",
       {
         args: [
           question,
@@ -37,7 +41,7 @@ exports.ask = async (req, res) => {
         ...(k != null ? { k } : {}),
         ...(d != null ? { d } : {}),
       });
-    } else {  
+    } else {
       const savedRecordQuestion = await prisma.qNa_tb.create({
         data: {
           chatId: parseInt(chatId),
@@ -57,7 +61,6 @@ exports.ask = async (req, res) => {
         ...(d != null ? { d } : {}),
       });
     }
-
   } catch (error) {
     console.error("Unexpected error:", error);
     res.status(500).json({
@@ -94,11 +97,14 @@ exports.saveAnswer = async (req, res) => {
     });
 
     console.log("Saved AI answer:", savedAnswer);
-    return res.status(201).json({ message: "AI answer saved", data: savedAnswer });
-
+    return res
+      .status(201)
+      .json({ message: "AI answer saved", data: savedAnswer });
   } catch (err) {
     console.error("Error saving AI answer:", err);
-    return res.status(500).json({ message: "Internal server error", error: err.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 };
 
@@ -111,7 +117,12 @@ exports.cancel = async (req, res) => {
 
   try {
     const response = await axios.post(
-      "http://" + process.env.AI_SERVER + ":" + process.env.AI_SERVER_PORT + "/cancel/" + taskId
+      "http://" +
+        process.env.AI_SERVER +
+        ":" +
+        process.env.AI_SERVER_PORT +
+        "/cancel/" +
+        taskId
     );
 
     // ลบข้อมูลใน qNa_tb โดยอ้างอิงจาก taskId
@@ -134,7 +145,6 @@ exports.cancel = async (req, res) => {
   }
 };
 
-
 // ดึงข้อความแชททั้งหมด
 exports.getAllqNa = async (req, res) => {
   try {
@@ -153,7 +163,9 @@ exports.getqNaByUserId = async (req, res) => {
       where: { userId: Number(req.params.userId) },
       orderBy: { createdAt: "desc" },
     });
-    res.status(200).json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
+    res
+      .status(200)
+      .json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
   } catch (error) {
     console.error("Error fetching chats by user: ", error);
     res.status(500).json({ message: "Error: " + error.message });
@@ -165,11 +177,13 @@ exports.getqNaByChatId = async (req, res) => {
   try {
     const chats = await prisma.qNa_tb.findMany({
       where: {
-        chatId: Number(req.params.chatId)
+        chatId: Number(req.params.chatId),
       },
       orderBy: { createdAt: "asc" },
     });
-    res.status(200).json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
+    res
+      .status(200)
+      .json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
   } catch (error) {
     console.error("Error fetching chats by user: ", error);
     res.status(500).json({ message: "Error: " + error.message });
@@ -213,7 +227,9 @@ exports.deleteqNa = async (req, res) => {
     });
 
     if (!chat) {
-      return res.status(404).json({ message: "ไม่พบ qNaID:" + req.params.qNaId });
+      return res
+        .status(404)
+        .json({ message: "ไม่พบ qNaID:" + req.params.qNaId });
     }
 
     const deletedqNa = await prisma.qNa_tb.delete({
@@ -234,7 +250,14 @@ exports.deleteqNa = async (req, res) => {
 exports.checkStatus = async (req, res) => {
   const { taskId } = req.params;
   try {
-    const response = await axios.get("http://" + process.env.AI_SERVER + ":" + process.env.AI_SERVER_PORT + "/status/" + taskId);
+    const response = await axios.get(
+      "http://" +
+        process.env.AI_SERVER +
+        ":" +
+        process.env.AI_SERVER_PORT +
+        "/status/" +
+        taskId
+    );
     return res.status(200).json({
       message: "Status fetched successfully",
       taskId,
