@@ -76,13 +76,46 @@ exports.getAllChats = async (req, res) => {
 };
 
 // ดึงข้อความแชทของ user
+// exports.getChatsByUserId = async (req, res) => {
+//   try {
+//     const chats = await prisma.chat_tb.findMany({
+//       where: { userId: Number(req.params.userId) },
+//       orderBy: { createdAt: "desc" },
+//     });
+//     res.status(200).json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
+//   } catch (error) {
+//     console.error("Error fetching chats by user: ", error);
+//     res.status(500).json({ message: "Error: " + error.message });
+//   }
+// };
 exports.getChatsByUserId = async (req, res) => {
   try {
+    const userId = Number(req.params.userId);
+
     const chats = await prisma.chat_tb.findMany({
-      where: { userId: Number(req.params.userId) },
-      orderBy: { createdAt: "desc" },
+      where: { userId },
+      include: {
+        qna_tb: {
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 1, // เอา QnA ล่าสุด
+        },
+      },
+      orderBy: [
+        {
+          qna_tb: {
+            _max: {
+              createdAt: "desc",
+            },
+          },
+        },
+      ],
     });
-    res.status(200).json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
+
+    res.status(200).json({
+      message: "ดึงข้อความแชทของผู้ใช้สำเร็จ",
+      data: chats,
+    });
   } catch (error) {
     console.error("Error fetching chats by user: ", error);
     res.status(500).json({ message: "Error: " + error.message });
