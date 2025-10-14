@@ -43,7 +43,7 @@ exports.editChat = async (req, res) => {
     }
 
     const updatedData = {
-      chatHeader: req.body.chatHeader.toString(),    
+      chatHeader: req.body.chatHeader.toString(),
     };
     console.log(updatedData);
     const result = await prisma.chat_tb.update({
@@ -94,23 +94,19 @@ exports.getChatsByUserId = async (req, res) => {
 
     const chats = await prisma.chat_tb.findMany({
       where: { userId },
-      include: {
-        qna_tb: {
-          select: { createdAt: true },
-          orderBy: { createdAt: "desc" },
-          take: 1, // เอา QnA ล่าสุด
-        },
-      },
-      orderBy: [
-        {
-          qNa_tb: {
-            _max: {
-              createdAt: "desc",
-            },
-          },
-        },
-      ],
     });
+
+    // 2. map QnA ล่าสุดเรียงตาม qNaId
+    const chatsWithQ = await Promise.all(
+      chats.map(async (chat) => {
+        const latestQ = await prisma.qNa_tb.findFirst({
+          where: { chatId: chat.id },
+          orderBy: { qNaId: 'desc' }, // <- qNaId ล่าสุด
+          select: { createdAt: true, qNaId: true },
+        });
+        return { ...chat, latestQ };
+      })
+    );
 
     res.status(200).json({
       message: "ดึงข้อความแชทของผู้ใช้สำเร็จ",

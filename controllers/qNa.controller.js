@@ -86,8 +86,8 @@ exports.saveAnswer = async (req, res) => {
     // บันทึกคำตอบ AI ลง qNa_tb
     const savedAnswer = await prisma.qNa_tb.create({
       data: {
-        chatId: chatId,
-        taskId: taskId,
+        chatId: parseInt(chatId),
+        taskId: parseInt(taskId),
         qNaWords: qNaWords,
         qNaType: "A",
       },
