@@ -103,7 +103,7 @@ exports.getChatsByUserId = async (req, res) => {
       },
       orderBy: [
         {
-          qna_tb: {
+          qNa_tb: {
             _max: {
               createdAt: "desc",
             },

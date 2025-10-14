@@ -11,7 +11,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
-const allowedOrigins = process.env.ORIGIN
+const allowedOrigins = process.env.ORIGIN?.split(',')
 const io = new Server(server, {
   cors: {
     origin: [allowedOrigins],
