@@ -15,7 +15,7 @@ exports.createUser = async (req, res) => {
     const { userName, userEmail, userPassword } = req.body;
 
     if (!userName || !userEmail || !userPassword) {
-      return res.status(400).json({ message: "กรอกชื่อผู้ใช้ อีเมล และรหัสผ่านให้ครบ" });
+      return res.status(400).json({ message: "Please enter username email and password" });
     }
 
     const inputEmail = userEmail.trim().toLowerCase();
@@ -34,11 +34,11 @@ exports.createUser = async (req, res) => {
 
     // คืน response ตาม field ที่ซ้ำจริง
     if (emailExists && usernameExists) {
-      return res.status(409).json({ message: "อีเมลและชื่อผู้ใช้นี้มีผู้ใช้แล้ว" });
+      return res.status(409).json({ message: "Email and Username are already exists" });
     } else if (emailExists) {
-      return res.status(409).json({ message: "อีเมลนี้มีผู้ใช้แล้ว" });
+      return res.status(409).json({ message: "Email is already exists" });
     } else if (usernameExists) {
-      return res.status(409).json({ message: "ชื่อผู้ใช้นี้มีผู้ใช้แล้ว" });
+      return res.status(409).json({ message: "Username is already exists" });
     }
 
     // 2️⃣ hash password
@@ -58,7 +58,7 @@ exports.createUser = async (req, res) => {
 
     // 4️⃣ ส่ง response (ไม่ส่ง password กลับ)
     res.status(201).json({
-      message: "User created successfully",
+      message: "Create account successfully",
       data: {
         id: newUser.userId,
         name: newUser.userName,
@@ -79,7 +79,7 @@ exports.checkLoginUser = async (req, res) => {
     const { userInput, userPassword } = req.body;
 
     if (!userInput || !userPassword) {
-      return res.status(400).json({ message: "userEmail or userName and userPassword are required." });
+      return res.status(400).json({ message: "Please enter username or email and password" });
     }
 
     const input = userInput.trim().toLowerCase();
@@ -99,13 +99,13 @@ exports.checkLoginUser = async (req, res) => {
     });
 
     if (!userData) {
-      return res.status(401).json({ message: "Invalid Email or Username" });
+      return res.status(401).json({ message: "Invalid username or email" });
     }
 
     const isMatch = await bcrypt.compare(userPassword, userData.userPassword);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid Email, Username or Password" });
+      return res.status(401).json({ message: "Invalid email username or password" });
     }
     console.log("UserData:", userData);
 
@@ -120,7 +120,7 @@ exports.checkLoginUser = async (req, res) => {
 
     res.status(200).json({
       user: responseUser,
-      message: "User login successfully"
+      message: "Login successfully"
     });
 
   } catch (error) {

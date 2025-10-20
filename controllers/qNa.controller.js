@@ -70,44 +70,7 @@ exports.ask = async (req, res) => {
   }
 };
 
-exports.saveAnswer = async (req, res) => {
-  try {
-    const { taskId, chatId, qNaWords } = req.body;
-
-    if (!taskId) {
-      return res.status(400).json({ message: "taskId is required." });
-    }
-
-    if (!chatId) {
-      return res.status(400).json({ message: "chatId is required." });
-    }
-
-    if (!qNaWords) {
-      return res.status(400).json({ message: "qNaWords is required." });
-    }
-
-    // บันทึกคำตอบ AI ลง qNa_tb
-    const savedAnswer = await prisma.qNa_tb.create({
-      data: {
-        chatId: parseInt(chatId),
-        taskId: String(taskId),
-        qNaWords: qNaWords,
-        qNaType: "A",
-      },
-    });
-
-    console.log("Saved AI answer:", savedAnswer);
-    return res
-      .status(201)
-      .json({ message: "AI answer saved", data: savedAnswer });
-  } catch (err) {
-    console.error("Error saving AI answer:", err);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", error: err.message });
-  }
-};
-
+// ยกเลิกการถาม
 exports.cancel = async (req, res) => {
   const { taskId } = req.params;
 
@@ -131,7 +94,7 @@ exports.cancel = async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "Cancel successful",
+      message: "Cancel successfully",
       taskId,
       deleted: deletedqNa.count,
       response: response.data,
@@ -142,6 +105,44 @@ exports.cancel = async (req, res) => {
       message: "Failed to cancel or delete job",
       error: error.message,
     });
+  }
+};
+
+// บันทึกคำตอบ
+exports.saveAnswer = async (req, res) => {
+  try {
+    const { taskId, chatId, qNaWords } = req.body;
+
+    if (!taskId) {
+      return res.status(400).json({ message: "taskId is required." });
+    }
+
+    if (!chatId) {
+      return res.status(400).json({ message: "chatId is required." });
+    }
+
+    if (!qNaWords) {
+      return res.status(400).json({ message: "qNaWords is required." });
+    }
+    // บันทึกคำตอบลงใน qNa_tb
+    const savedAnswer = await prisma.qNa_tb.create({
+      data: {
+        chatId: parseInt(chatId),
+        taskId: String(taskId),
+        qNaWords: qNaWords,
+        qNaType: "A",
+      },
+    });
+
+    console.log("Saved AI answer:", savedAnswer);
+    return res
+      .status(201)
+      .json({ message: "AI answer saved", data: savedAnswer });
+  } catch (err) {
+    console.error("Error saving AI answer:", err);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 };
 
@@ -156,7 +157,7 @@ exports.getAllqNa = async (req, res) => {
   }
 };
 
-// ดึงข้อความแชทของ user
+// ดึงข้อความแชทโดย user id
 exports.getqNaByUserId = async (req, res) => {
   try {
     const chats = await prisma.qNa_tb.findMany({
@@ -165,14 +166,14 @@ exports.getqNaByUserId = async (req, res) => {
     });
     res
       .status(200)
-      .json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
+      .json({ message: "Fetch qNa by user ID successfully", data: chats });
   } catch (error) {
     console.error("Error fetching chats by user: ", error);
     res.status(500).json({ message: "Error: " + error.message });
   }
 };
 
-// ดึงข้อความแชทของ user
+// ดึงข้อความแชทโดย chat id
 exports.getqNaByChatId = async (req, res) => {
   try {
     const chats = await prisma.qNa_tb.findMany({
@@ -183,7 +184,7 @@ exports.getqNaByChatId = async (req, res) => {
     });
     res
       .status(200)
-      .json({ message: "ดึงข้อความแชทของผู้ใช้สำเร็จ", data: chats });
+      .json({ message: "Fetch qNa by chat ID successfully", data: chats });
   } catch (error) {
     console.error("Error fetching chats by user: ", error);
     res.status(500).json({ message: "Error: " + error.message });
@@ -206,11 +207,11 @@ exports.getqNa = async (req, res) => {
     });
 
     if (!chat) {
-      return res.status(404).json({ message: "ข้อความแชทไม่พบ" });
+      return res.status(404).json({ message: "Chat not found" });
     }
 
     res.status(200).json({
-      message: "ข้อความแชทพบ",
+      message: "Chat found",
       data: { chat, user: chat.user },
     });
   } catch (error) {
@@ -229,7 +230,7 @@ exports.deleteqNa = async (req, res) => {
     if (!chat) {
       return res
         .status(404)
-        .json({ message: "ไม่พบ qNaID:" + req.params.qNaId });
+        .json({ message: "qNaID is not found:" + req.params.qNaId });
     }
 
     const deletedqNa = await prisma.qNa_tb.delete({
@@ -237,7 +238,7 @@ exports.deleteqNa = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "ลบข้อความแชทสำเร็จ",
+      message: "Delete qNa successfully",
       data: deletedqNa,
     });
   } catch (error) {

@@ -30,39 +30,6 @@ exports.createChat = async (req, res) => {
   }
 };
 
-// แก้ไขข้อความแชท (ไม่มีรูปภาพ)
-exports.editChat = async (req, res) => {
-  try {
-    const chat = await prisma.chat_tb.findFirst({
-      where: { chatId: Number(req.params.chatId) },
-    });
-
-    if (!chat) {
-      return res.status(404).json({ message: "ข้อความแชทไม่พบ" });
-    }
-
-    const updatedData = {
-      chatHeader: req.body.chatHeader.toString(),
-    };
-    console.log(updatedData);
-    const result = await prisma.chat_tb.update({
-      where: { chatId: Number(req.params.chatId) },
-      data: updatedData,
-    });
-
-    res.status(200).json({
-      message: "แก้ไขข้อความแชทสำเร็จ",
-      data: result,
-    });
-  } catch (error) {
-    console.error("Error updating chat: ", error);
-    res.status(500).json({
-      message: "Error: " + error.message,
-      errorDetails: error.stack,
-    });
-  }
-};
-
 // ดึงข้อความแชททั้งหมด
 exports.getAllChats = async (req, res) => {
   try {
@@ -95,7 +62,7 @@ exports.getChatsByUserId = async (req, res) => {
     );
 
     res.status(200).json({
-      message: "ดึงข้อความแชทของผู้ใช้สำเร็จ",
+      message: "Fetch chat by user id successfully",
       data: chats,
     });
   } catch (error) {
@@ -119,11 +86,11 @@ exports.getChat = async (req, res) => {
     });
 
     if (!chat) {
-      return res.status(404).json({ message: "ข้อความแชทไม่พบ" });
+      return res.status(404).json({ message: "Chat not found" });
     }
 
     res.status(200).json({
-      message: "ข้อความแชทพบ",
+      message: "Chat found",
       data: { chat, user: chat.user },
     });
   } catch (error) {
@@ -131,6 +98,40 @@ exports.getChat = async (req, res) => {
     res.status(500).json({ message: "Error: " + error.message });
   }
 };
+
+// แก้ไขข้อความแชท (ไม่มีรูปภาพ)
+exports.editChat = async (req, res) => {
+  try {
+    const chat = await prisma.chat_tb.findFirst({
+      where: { chatId: Number(req.params.chatId) },
+    });
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const updatedData = {
+      chatHeader: req.body.chatHeader.toString(),
+    };
+    console.log(updatedData);
+    const result = await prisma.chat_tb.update({
+      where: { chatId: Number(req.params.chatId) },
+      data: updatedData,
+    });
+
+    res.status(200).json({
+      message: "Chat updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error updating chat: ", error);
+    res.status(500).json({
+      message: "Error: " + error.message,
+      errorDetails: error.stack,
+    });
+  }
+};
+
 
 // ลบข้อความแชท
 exports.deleteChat = async (req, res) => {
@@ -142,7 +143,7 @@ exports.deleteChat = async (req, res) => {
     });
 
     if (!chat) {
-      return res.status(404).json({ message: "ข้อความแชทไม่พบ" });
+      return res.status(404).json({ message: "Chat not found" });
     }
 
     // ลบ qNa_tb ที่อ้างอิง chatId ก่อน
@@ -156,7 +157,7 @@ exports.deleteChat = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "ลบข้อความแชทสำเร็จ",
+      message: "Chat deleted successfully",
       data: deletedChat,
     });
   } catch (error) {
