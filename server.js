@@ -55,20 +55,16 @@ app.use((err, req, res, next) => {
 });
 
 io.on('connect', (socket) => {
-  console.log('User connected');
+  // console.log('User connected');
   socket.on('disconnect', () => {
-    console.log('User disconnected');
+    // console.log('User disconnected');
   });
 
   socket.on("task", (payload) => {
-    console.log('Task received:', payload);
+    // console.log('Task received:', payload);
     // console.log('taskId:', payload.taskId);
     io.emit(`${payload.taskId}`, payload.message);
-    console.log('Emitted to:', `${payload.taskId}`);
-  })
-
-  socket.on("BuddhamAI", (msg) => {
-    console.log('Socket :', msg);
+    // console.log('Emitted to:', `${payload.taskId}`);
   })
 
   socket.on("debug", (msg) => {
