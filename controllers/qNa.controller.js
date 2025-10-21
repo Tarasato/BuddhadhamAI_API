@@ -134,7 +134,7 @@ exports.saveAnswer = async (req, res) => {
       },
     });
 
-    console.log("Saved AI answer:", savedAnswer);
+    // console.log("Saved AI answer:", savedAnswer);
     return res
       .status(201)
       .json({ message: "AI answer saved", data: savedAnswer });

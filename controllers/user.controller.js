@@ -43,7 +43,7 @@ exports.createUser = async (req, res) => {
 
     // 2️⃣ hash password
     const hashedPassword = await bcrypt.hash(userPassword, SALT_ROUNDS);
-    console.log("Hashed Password:", hashedPassword);
+    // console.log("Hashed Password:", hashedPassword);
 
     // 3️⃣ สร้าง user
     const newUser = await prisma.user_tb.create({
@@ -54,7 +54,7 @@ exports.createUser = async (req, res) => {
       },
     });
 
-    console.log("Create user result:", newUser);
+    // console.log("Create user result:", newUser);
 
     // 4️⃣ ส่ง response (ไม่ส่ง password กลับ)
     res.status(201).json({
@@ -107,7 +107,7 @@ exports.checkLoginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email username or password" });
     }
-    console.log("UserData:", userData);
+    // console.log("UserData:", userData);
 
     const responseUser = {
       id: userData.userId,
