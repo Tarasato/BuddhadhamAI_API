@@ -15,7 +15,7 @@ API_SERVER_PORT = 3000
 AI_SERVER = "127.0.0.1"
 AI_SERVER_PORT = 0000
 
-ORIGIN = "http://yourdomain.com", "http://localhost:8081"
+ORIGIN = "http://yourdomain.com,http://localhost:8081"
 ```
 
 sqlcmd -S <ServerIP> -U <Username> -P <Password>
