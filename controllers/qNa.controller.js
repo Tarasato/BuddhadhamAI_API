@@ -46,7 +46,7 @@ exports.ask = async (req, res) => {
         data: {
           chatId: parseInt(chatId),
           taskId: taskId,
-          qNaWords: question,
+          qNaWords: question.replace(/^'(.*)'$/, "$1"),
           qNaType: "Q",
         },
       });
