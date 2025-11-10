@@ -53,17 +53,33 @@ exports.getChatsByUserId = async (req, res) => {
     const chatsWithQ = await Promise.all(
       chats.map(async (chat) => {
         const latestQ = await prisma.qNa_tb.findFirst({
-          where: { chatId: chat.id },
-          orderBy: { qNaId: "desc" }, // <- qNaId ล่าสุด
+          where: { chatId: chat.chatId },
+          orderBy: { createdAt: "desc" }, // หรือจะใช้ { qNaId: "desc" } ก็ได้
           select: { createdAt: true, qNaId: true },
         });
+
         return { ...chat, latestQ };
       })
     );
 
+    // ✅ เรียงตามเงื่อนไขที่กำหนด
+    chatsWithQ.sort((a, b) => {
+      // เวลาของแชท a
+      const aTime = a.latestQ?.createdAt
+        ? new Date(a.latestQ.createdAt).getTime()
+        : new Date(a.createdAt).getTime();
+
+      // เวลาของแชท b
+      const bTime = b.latestQ?.createdAt
+        ? new Date(b.latestQ.createdAt).getTime()
+        : new Date(b.createdAt).getTime();
+
+      return bTime - aTime; // ล่าสุดอยู่บนสุด
+    });
+
     res.status(200).json({
       message: "Fetch chat by user id successfully",
-      data: chats,
+      data: chatsWithQ,
     });
   } catch (error) {
     console.error("Error fetching chats by user: ", error);
