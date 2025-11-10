@@ -21,7 +21,7 @@ exports.ask = async (req, res) => {
         "/ask",
       {
         args: [
-          question,
+          `'${question}'`,
           ...(k != null ? [`-k ${k}`] : []),
           ...(d != null ? [`-d ${d}`] : []),
         ],
