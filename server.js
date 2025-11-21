@@ -10,6 +10,8 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 const server = http.createServer(app);
 const allowedOrigins = process.env.ORIGIN?.split(',')
 const io = new Server(server, {
